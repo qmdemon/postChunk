@@ -41,7 +41,7 @@ func main() {
 }
 
 func listen(listener net.Listener, ch_sconn chan net.Conn, ch_httpdata, ch_det chan string) {
-	buf := make([]byte, 1024)
+	buf := make([]byte, 4096)
 	for {
 
 		sconn, err := listener.Accept()
@@ -103,21 +103,26 @@ func chunk2(content string, ch_httpdata, ch_det chan string) {
 
 		str = strings.TrimSpace(str)
 
+		//分离http 请求
 		getrequest_method := strings.Index(str, "HTTP/")
 		if getrequest_method != -1 {
 			method = strings.Split(str, " ")[0]
 		}
+		//提取请求头
 		if host := strings.Index(str, "Host"); host != -1 {
 			det = strings.Split(str, ": ")[1]
 			if det_int := strings.Index(det, ":"); det_int == -1 {
 				det = det + ":80"
 			}
 		}
+
+		// 分离出第一个换行 获取出post 的body
 		if str == "" {
 			getdataint = index + 1
 			break
 
 		}
+		//设置并替换Transfer-Encoding: chunked 请求头
 		if content_length := strings.Index(str, "Content-Length"); content_length != -1 && method == "POST" {
 			clist[index] = "Transfer-Encoding: chunked"
 		}
@@ -134,7 +139,7 @@ func chunk2(content string, ch_httpdata, ch_det chan string) {
 	if method == "POST" {
 		for j < len(data) {
 			time.Sleep(1)
-			rand.Seed(time.Now().UnixNano())
+			rand.Seed(time.Now().UnixNano()) // 设置随机数种子  纳秒
 			i = j + rand.Intn(4) + 1
 			if i > len(data) {
 				i = len(data)
@@ -161,6 +166,7 @@ func chunk2(content string, ch_httpdata, ch_det chan string) {
 	//return httpdata, det
 }
 
+// 随机生成字符串
 func RandLow2(n int) []byte {
 	var letters = []byte("abcdefghjkmnpqrstuvwxyz123456789")
 	if n <= 0 {
