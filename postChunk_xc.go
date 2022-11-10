@@ -12,6 +12,9 @@ import (
 	"time"
 )
 
+//协程版本
+//利用http post 分块传输代理
+
 func main() {
 	socket := flag.String("s", "127.0.0.1:1234", "设置带IP以及端口")
 	flag.Parse()
@@ -138,7 +141,6 @@ func chunk2(content string, ch_httpdata, ch_det chan string) {
 			}
 			//rand.Seed(time.Now().UnixNano())
 			cdata += strconv.Itoa(i-j) + ";" + string(RandLow2(rand.Intn(10))) + "\r\n" + data[j:i] + "\r\n"
-
 
 			j = i
 

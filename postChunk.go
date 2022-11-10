@@ -11,6 +11,9 @@ import (
 	"time"
 )
 
+//单线程版本(好像有点问题)
+//利用http post 分块传输代理
+
 func main() {
 	socket := flag.String("s", "127.0.0.1:1234", "设置带IP以及端口")
 	flag.Parse()
